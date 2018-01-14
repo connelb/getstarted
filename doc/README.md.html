@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>README.md</title>
+  <meta http-equiv="content-type" content="text/html; charset=UTF-8">
+  <link rel="stylesheet" media="all" href="doc-style.css" />
+  <script src="doc-filelist.js"></script>
+  <script>
+    var relativeDir = "";
+    var thisFile = "README.md";
+    var defaultSidebar = true;
+  </script>
+  <script src="doc-script.js"></script>
+
+</head>
+<body>
+  <div id="sidebar_wrapper">
+    <div id="sidebar_switch">
+      <span class="tree">Files</span>
+      <span class="headings">Headings</span>
+    </div>
+    <div id="tree"></div>
+    <div id="headings">
+
+      <div class="heading h1">
+        <a href="#angular-cli-with-docker">Angular CLI with Docker</a>
+      </div>
+
+      <div class="heading h2">
+        <a href="#running">Running</a>
+      </div>
+
+      <div class="heading h2">
+        <a href="#faster">Faster</a>
+      </div>
+
+    </div>
+  </div>
+  <div id="sidebar-toggle"></div>
+  <div id="container">
+    <div class="docs markdown"><div class="pilwrap" id="angular-cli-with-docker">
+  <h1>
+    <a href="#angular-cli-with-docker" name="angular-cli-with-docker" class="pilcrow"></a>
+Angular CLI with Docker
+  </h1>
+</div>
+<p>This is an example app created with the Angular CLI that runs with Docker</p>
+<p>I ran <code>ng new myapp</code> to generate the app. Then added the 4 docker files:</p>
+<pre><code class="bash">.dockerignore
+docker-compose.yml
+docker-compose.debug.yml
+Dockerfile
+</code></pre>
+<div class="pilwrap" id="running">
+  <h2>
+    <a href="#running" name="running" class="pilcrow"></a>
+Running
+  </h2>
+</div>
+<p>Two options are available. I prefer the docker compose technique</p>
+<p>Option 1) You can run docker build and docker run</p>
+<pre><code>docker build --rm -f Dockerfile -t angular-cli-docker-ootb:latest .
+docker run --rm -d -p 443:443 -p 80:80 angular-cli-docker-ootb:latest
+</code></pre>
+<p>Option 2) You can run docker compose <code>docker-compose up -d --build</code></p>
+<div class="pilwrap" id="faster">
+  <h2>
+    <a href="#faster" name="faster" class="pilcrow"></a>
+Faster
+  </h2>
+</div>
+<p>This example uses the node alpine image and then installs the latest Angular CLI. If you want to use an image that has node alpine and the Angular CLI already isntalled, you can change your <code>Dockerfile</code> to use <code>johnpapa/angular-cli</code>. SOmething like this ...</p>
+<pre><code class="bash">FROM johnpapa/angular-cli as angular-built
+WORKDIR /usr/src/app
+COPY package.json package.json
+RUN npm install --silent
+COPY . .
+RUN ng build --prod --build-optimizer
+
+FROM nginx:alpine
+LABEL author=<span class="hljs-string">"John Papa"</span>
+COPY --from=angular-built /usr/src/app/dist /usr/share/nginx/html
+EXPOSE 80 443
+CMD [ <span class="hljs-string">"nginx"</span>, <span class="hljs-string">"-g"</span>, <span class="hljs-string">"daemon off;"</span> ]
+</code></pre>
+<p>The catch on this is that it uses an unofficial docker image that I created. I try to keep it updated, but the latest will always be to install it yourself in the <code>Dockerfile</code></p>
+</div>
+  </div>
+</body>
+</html>
