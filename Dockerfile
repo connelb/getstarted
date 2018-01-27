@@ -2,7 +2,7 @@
 # Using the above image allows us toskip the angular-cli install
 FROM node:8.9-alpine as angular-built
 WORKDIR /usr/src/app
-RUN npm install -g --unsafe-perm --verbose @angular/cli
+RUN sudo npm install -g --unsafe-perm --verbose @angular/cli
 COPY package.json package.json
 RUN npm install --silent
 COPY . .
